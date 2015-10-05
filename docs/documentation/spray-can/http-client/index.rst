@@ -56,6 +56,9 @@ The connection actor will render these as one logical HTTP request with ``Transf
 The timer for checking request timeouts (if configured to non-zero) only starts running when the final
 ``ChunkedMessageEnd`` message was sent out.
 
+Very large chunked requests (large uploads) are at risk of the server responding early and closing the connection (for example with a 413 response). Clients sending a large chunked request should watch for either a ``Tcp.ConnectionClosed`` message or a ``HttpResponse`` message from Spray and stop sending the request on receipt of either one. (See RFC 7230 section 6.5_.) (Alternatively, you could watch for the death of the connection actor and stop the upload in that event.)
+
+.. _RFC 7230 section 6.5: https://tools.ietf.org/html/rfc7230#section-6.5
 
 Chunked Responses
 -----------------
